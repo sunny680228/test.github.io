@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>倒數計時</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .clock {
+            font-size: 3rem;
+            margin: 20px 0;
+        }
+        #completeMessage {
+            font-size: 1.5rem;
+            margin: 20px 0;
+        }
+        #completeImage {
+            width: 100px;
+            height: 100px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="setupPage">
+        <h1>設定倒數計時</h1>
+        <label for="timeInput">倒數時間（秒）:</label>
+        <input type="number" id="timeInput" min="1">
+        <br><br>
+        <label for="soundCheckbox">是否要倒數計時聲音:</label>
+        <input type="checkbox" id="soundCheckbox">
+        <br><br>
+        <button onclick="startCountdown()">開始計時</button>
+    </div>
+    
+    <div class="container hidden" id="countdownPage">
+        <div class="clock" id="clock">00:00</div>
+    </div>
+    
+    <div class="container">
+        <div id="completeMessage">推陳初心</div>
+        <img id="completeImage" src="Q版人像_彩色(去背).png" alt="Complete Image">
+    </div>
+
+    <audio id="countdownSound" src="https://www.teachersay.com/image/works/Lljbox1YshiM0xQw736XaQ9KsMKkEp5fv4zXNxXL.mp3" preload="auto"></audio>
+
+    <script>
+        let countdown;
+        const countdownSound = document.getElementById('countdownSound');
+        
+        function startCountdown() {
+            const timeInput = document.getElementById('timeInput').value;
+            const soundCheckbox = document.getElementById('soundCheckbox').checked;
+            const countdownPage = document.getElementById('countdownPage');
+            const setupPage = document.getElementById('setupPage');
+            const clock = document.getElementById('clock');
+            
+            let time = parseInt(timeInput);
+            if (isNaN(time) || time < 1) {
+                alert('請輸入有效的倒數時間');
+                return;
+            }
+            
+            setupPage.classList.add('hidden');
+            countdownPage.classList.remove('hidden');
+            
+            countdown = setInterval(() => {
+                const minutes = String(Math.floor(time / 60)).padStart(2, '0');
+                const seconds = String(time % 60).padStart(2, '0');
+                clock.innerText = `${minutes}:${seconds}`;
+                
+                if (time <= 0) {
+                    clearInterval(countdown);
+                    return;
+                }
+                
+                if (soundCheckbox) {
+                    countdownSound.currentTime = 0;
+                    countdownSound.play();
+                }
+                
+                time--;
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
